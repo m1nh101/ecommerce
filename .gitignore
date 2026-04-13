@@ -1,0 +1,102 @@
+# Build Results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio Cache/Options
+.vs/
+.vscode/
+*.dcproj.user
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+*.swp
+*.swo
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# NuGet
+*.nupkg
+*.snupkg
+.nuget/
+
+# Entity Framework Core
+migrations/
+
+# Environment variables and secrets
+.env
+.env.local
+.env.*.local
+appsettings.Development.json
+appsettings.Production.json
+secrets.json
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+*.mdf
+*.ldf
+
+# Test results
+TestResults/
+.trx
+*.coverage
+coverage.cobertura.xml
+
+# OS-specific
+Thumbs.db
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Log files
+*.log
+*.logs
+nlog.config.user
+
+# ReSharper
+_ReSharper*/
+*.DotSettings.user
+
+# BenchmarkDotNet
+BenchmarkDotNet.Artifacts/
+
+# Rider specific
+.idea/
+*.sln.iml
+
+# Local build artifacts
+artifacts/
+
+# Node modules (if using npm/yarn for frontend)
+node_modules/
+dist/
+
+# Agent
+settings.local.json
