@@ -1,4 +1,3 @@
-using Domain.Enums;
 using Domain.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -29,11 +28,11 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
             .HasMaxLength(100)
             .IsRequired();
 
-        builder.Property(u => u.Role)
-            .HasConversion<string>()
-            .HasMaxLength(50)
-            .IsRequired()
-            .HasDefaultValue(UserRole.Customer);
+        builder.Property(u => u.IdentityId)
+            .IsRequired();
+
+        builder.HasIndex(u => u.IdentityId)
+            .IsUnique();
 
         builder.Property(u => u.IsActive)
             .IsRequired()

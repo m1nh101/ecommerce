@@ -1,4 +1,3 @@
-using Domain.Enums;
 using Domain.Primitives;
 using Domain.ValueObjects;
 using Domain.Users.Events;
@@ -11,31 +10,31 @@ public sealed class User : AggregateRoot<UserId>
 
     private User() { }
 
-    private User(UserId id, string email, string firstName, string lastName, UserRole role)
+    private User(UserId id, Guid identityId, string email, string firstName, string lastName)
         : base(id)
     {
+        IdentityId = identityId;
         Email = email;
         FirstName = firstName;
         LastName = lastName;
-        Role = role;
         IsActive = true;
         CreatedAt = DateTime.UtcNow;
         UpdatedAt = DateTime.UtcNow;
     }
 
+    public Guid IdentityId { get; private set; }
     public string Email { get; private set; } = null!;
     public string FirstName { get; private set; } = null!;
     public string LastName { get; private set; } = null!;
-    public UserRole Role { get; private set; }
     public bool IsActive { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime UpdatedAt { get; private set; }
 
     public IReadOnlyList<UserAddress> Addresses => _addresses.AsReadOnly();
 
-    public static User Create(string email, string firstName, string lastName, UserRole role = UserRole.Customer)
+    public static User Create(Guid identityId, string email, string firstName, string lastName)
     {
-        var user = new User(UserId.New(), email, firstName, lastName, role);
+        var user = new User(UserId.New(), identityId, email, firstName, lastName);
         user.RaiseDomainEvent(new UserCreatedDomainEvent(user.Id));
         return user;
     }
