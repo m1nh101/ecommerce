@@ -34,6 +34,8 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseExceptionHandler();
 app.UseHttpsRedirection();
 

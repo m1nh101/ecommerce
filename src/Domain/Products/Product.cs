@@ -76,6 +76,14 @@ public sealed class Product : AggregateRoot<ProductId>
         return Result.Success();
     }
 
+    public void UpdateDetails(string name, string? description, string category)
+    {
+        Name = name;
+        Description = description;
+        Category = category;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
     public void Activate()
     {
         IsActive = true;
