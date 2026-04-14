@@ -1,5 +1,7 @@
+using Application.Common;
 using Application.Products.Add;
 using Application.Products.Detail;
+using Application.Products.Get;
 using Application.Products.Update;
 using Mediator;
 
@@ -9,6 +11,26 @@ internal static class ProductEndpoints
 {
     internal static IEndpointRouteBuilder MapProductEndpoints(this IEndpointRouteBuilder app)
     {
+        app.MapGet("/api/v1/products", async (
+            [AsParameters] GetProductsQuery query,
+            IMediator mediator,
+            CancellationToken cancellationToken) =>
+        {
+            var result = await mediator.Send(query, cancellationToken);
+
+            return result.IsSuccess
+                ? Results.Ok(result.Value)
+                : Results.Problem(
+                    statusCode: StatusCodes.Status500InternalServerError,
+                    title: "Internal Server Error");
+        })
+        .WithName("GetProducts")
+        .WithTags("Products")
+        .WithSummary("Get paginated list of active products")
+        .AllowAnonymous()
+        .Produces<PagedResponse<ProductListItemResponse>>(StatusCodes.Status200OK)
+        .ProducesValidationProblem();
+
         app.MapGet("/api/v1/products/{productId:guid}", async (
             Guid productId,
             IMediator mediator,
