@@ -1,4 +1,5 @@
 using Application.Products.Add;
+using Application.Products.Detail;
 using Application.Products.Update;
 using Mediator;
 
@@ -8,6 +9,34 @@ internal static class ProductEndpoints
 {
     internal static IEndpointRouteBuilder MapProductEndpoints(this IEndpointRouteBuilder app)
     {
+        app.MapGet("/api/v1/products/{productId:guid}", async (
+            Guid productId,
+            IMediator mediator,
+            CancellationToken cancellationToken) =>
+        {
+            var result = await mediator.Send(new GetProductQuery(productId), cancellationToken);
+
+            if (result.IsSuccess)
+                return Results.Ok(result.Value);
+
+            return result.Error.Code switch
+            {
+                "Product.NotFound" => Results.Problem(
+                    statusCode: StatusCodes.Status404NotFound,
+                    title: "Not Found",
+                    detail: result.Error.Description),
+                _ => Results.Problem(
+                    statusCode: StatusCodes.Status500InternalServerError,
+                    title: "Internal Server Error")
+            };
+        })
+        .WithName("GetProduct")
+        .WithTags("Products")
+        .WithSummary("Get product by ID")
+        .RequireAuthorization()
+        .Produces<ProductDetailResponse>(StatusCodes.Status200OK)
+        .ProducesProblem(StatusCodes.Status404NotFound);
+
         app.MapPost("/api/v1/products", async (
             AddProductCommand command,
             IMediator mediator,
