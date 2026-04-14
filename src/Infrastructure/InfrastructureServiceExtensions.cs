@@ -1,6 +1,9 @@
 using Application.Abstractions;
+using Application.Abstractions.Tokens;
 using Infrastructure.Database;
 using Infrastructure.Identity;
+using Infrastructure.Identity.Models;
+using Infrastructure.Identity.Tokens;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -27,6 +30,13 @@ public static class InfrastructureServiceExtensions
 
         services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
 
+        services.AddOptions<JwtSettings>()
+            .BindConfiguration(JwtSettings.SectionName)
+            .ValidateOnStart();
+
+        services.AddSingleton<ITokenGenerator, TokenGenerator>();
+        services.AddScoped<IIdentityService, IdentityService>();
+
         services
             .AddIdentityCore<ApplicationUser>(options =>
             {
@@ -35,7 +45,9 @@ public static class InfrastructureServiceExtensions
                 options.Password.RequireUppercase = true;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequiredLength = 8;
-                options.Lockout.AllowedForNewUsers = false;
+                options.Lockout.AllowedForNewUsers = true;
+                options.Lockout.MaxFailedAccessAttempts = 5;
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromHours(1);
                 options.User.RequireUniqueEmail = true;
             })
             .AddRoles<ApplicationRole>()

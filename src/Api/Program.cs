@@ -1,3 +1,4 @@
+using Api.Endpoints.Auth;
 using Application.Behaviors;
 using FluentValidation;
 using Infrastructure;
@@ -34,6 +35,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseExceptionHandler();
 app.UseHttpsRedirection();
+
+app.MapAuthEndpoints();
 
 app.MapGet("/health", () => Results.Ok(new { status = "healthy" }))
    .WithName("HealthCheck")

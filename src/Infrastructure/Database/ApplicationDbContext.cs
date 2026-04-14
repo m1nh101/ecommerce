@@ -4,7 +4,7 @@ using Domain.Payments;
 using Domain.Primitives;
 using Domain.Products;
 using Domain.Users;
-using Infrastructure.Identity;
+using Infrastructure.Identity.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
