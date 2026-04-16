@@ -1,5 +1,6 @@
 using Application.Abstractions;
 using Application.Abstractions.Tokens;
+using Infrastructure.Carts;
 using Infrastructure.Database;
 using Infrastructure.Identity;
 using Infrastructure.Identity.Models;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Redis.OM;
 
 namespace Infrastructure;
 
@@ -19,6 +21,13 @@ public static class InfrastructureServiceExtensions
     {
         var connectionString = configuration.GetConnectionString("Database")
             ?? throw new InvalidOperationException("Connection string 'Database' not found.");
+
+        var redisConnectionString = configuration["Redis:ConnectionString"]
+            ?? "redis://localhost:6379";
+        services.AddSingleton(new RedisConnectionProvider(redisConnectionString));
+        services.AddScoped<ICartStore, RedisCartStore>();
+        services.AddHostedService<RedisIndexCreationService>();
+
 
         services.AddDbContext<ApplicationDbContext>(options =>
             options

@@ -1,5 +1,8 @@
 using Api.Endpoints.Auth;
+using Api.Endpoints.Carts;
 using Api.Endpoints.Products;
+using Api.Services;
+using Application.Abstractions;
 using Application.Behaviors;
 using FluentValidation;
 using Infrastructure;
@@ -23,6 +26,9 @@ builder.Services.AddValidatorsFromAssembly(
 
 builder.Services.AddInfrastructure(builder.Configuration);
 
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
@@ -41,6 +47,7 @@ app.UseHttpsRedirection();
 
 app.MapAuthEndpoints();
 app.MapProductEndpoints();
+app.MapCartEndpoints();
 
 app.MapGet("/health", () => Results.Ok(new { status = "healthy" }))
    .WithName("HealthCheck")
