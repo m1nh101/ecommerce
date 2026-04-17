@@ -1,0 +1,3 @@
+Faker
+faker-ecommerce-provider
+psycopg2

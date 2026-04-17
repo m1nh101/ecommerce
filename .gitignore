@@ -100,3 +100,5 @@ dist/
 
 # Agent
 settings.local.json
+
+tools/data-generator/env
