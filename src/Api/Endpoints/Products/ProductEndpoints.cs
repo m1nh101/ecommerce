@@ -26,7 +26,7 @@ internal static class ProductEndpoints
         })
         .WithName("GetProducts")
         .WithTags("Products")
-        .WithSummary("Get paginated list of active products")
+        .WithSummary("Get paginated list of products")
         .AllowAnonymous()
         .Produces<PagedResponse<ProductListItemResponse>>(StatusCodes.Status200OK)
         .ProducesValidationProblem();
@@ -69,21 +69,10 @@ internal static class ProductEndpoints
             if (result.IsSuccess)
                 return Results.Created($"/api/v1/products/{result.Value}", new { ProductId = result.Value });
 
-            return result.Error.Code switch
-            {
-                "Product.InvalidPrice" => Results.Problem(
-                    statusCode: StatusCodes.Status400BadRequest,
-                    title: "Bad Request",
-                    detail: result.Error.Description),
-                "Product.InvalidStockQuantity" => Results.Problem(
-                    statusCode: StatusCodes.Status400BadRequest,
-                    title: "Bad Request",
-                    detail: result.Error.Description),
-                _ => Results.Problem(
-                    statusCode: StatusCodes.Status400BadRequest,
-                    title: "Bad Request",
-                    detail: result.Error.Description)
-            };
+            return Results.Problem(
+                statusCode: StatusCodes.Status400BadRequest,
+                title: "Bad Request",
+                detail: result.Error.Description);
         })
         .WithName("AddProduct")
         .WithTags("Products")
@@ -103,10 +92,11 @@ internal static class ProductEndpoints
                 productId,
                 request.Name,
                 request.Description,
-                request.Price,
+                request.Brand,
+                request.CategoryId,
+                request.Gender,
+                request.BasePrice,
                 request.Currency,
-                request.StockQuantity,
-                request.Category,
                 request.IsActive);
 
             var result = await mediator.Send(command, cancellationToken);
@@ -119,12 +109,6 @@ internal static class ProductEndpoints
                 "Product.NotFound" => Results.Problem(
                     statusCode: StatusCodes.Status404NotFound,
                     title: "Not Found",
-                    detail: result.Error.Description),
-                "Product.InvalidPrice" or
-                "Product.InvalidStockQuantity" or
-                "Product.InsufficientStock" => Results.Problem(
-                    statusCode: StatusCodes.Status400BadRequest,
-                    title: "Bad Request",
                     detail: result.Error.Description),
                 _ => Results.Problem(
                     statusCode: StatusCodes.Status400BadRequest,

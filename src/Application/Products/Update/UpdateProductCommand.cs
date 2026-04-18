@@ -7,8 +7,9 @@ public record UpdateProductCommand(
     Guid ProductId,
     string Name,
     string? Description,
-    decimal Price,
+    string Brand,
+    Guid CategoryId,
+    string Gender,
+    decimal BasePrice,
     string Currency,
-    int StockQuantity,
-    string Category,
     bool IsActive) : ICommand<Result>;

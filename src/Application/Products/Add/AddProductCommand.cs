@@ -6,7 +6,8 @@ namespace Application.Products.Add;
 public record AddProductCommand(
     string Name,
     string? Description,
-    decimal Price,
-    string Currency,
-    int StockQuantity,
-    string Category) : ICommand<Result<Guid>>;
+    string Brand,
+    Guid CategoryId,
+    string Gender,
+    decimal BasePrice,
+    string Currency) : ICommand<Result<Guid>>;

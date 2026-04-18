@@ -1,4 +1,5 @@
 using Application.Abstractions;
+using Domain.Enums;
 using Domain.Primitives;
 using Domain.Products;
 using Domain.ValueObjects;
@@ -11,21 +12,19 @@ public sealed class AddProductCommandHandler(IApplicationDbContext dbContext)
 {
     public async ValueTask<Result<Guid>> Handle(AddProductCommand command, CancellationToken cancellationToken)
     {
-        var price = new Money(command.Price, command.Currency);
+        if (!Enum.TryParse<Gender>(command.Gender, ignoreCase: true, out var gender))
+            return ProductErrors.InvalidGender;
 
-        var productCreationResult = Product.Create(
-            command.Name,
-            command.Description,
-            price,
-            command.StockQuantity,
-            command.Category);
+        var basePrice = new Money(command.BasePrice, command.Currency);
+        var categoryId = new CategoryId(command.CategoryId);
 
-        if (productCreationResult.IsFailure)
-            return productCreationResult.Error;
+        var result = Product.Create(command.Name, command.Description, command.Brand, categoryId, gender, basePrice);
+        if (result.IsFailure)
+            return result.Error;
 
-        dbContext.Products.Add(productCreationResult.Value);
+        dbContext.Products.Add(result.Value);
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        return productCreationResult.Value.Id.Value;
+        return result.Value.Id.Value;
     }
 }

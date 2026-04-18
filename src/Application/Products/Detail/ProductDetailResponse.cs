@@ -4,10 +4,30 @@ public sealed record ProductDetailResponse(
     Guid Id,
     string Name,
     string? Description,
-    decimal Price,
-    string Currency,
-    int StockQuantity,
-    string Category,
+    string Brand,
+    Guid CategoryId,
+    string Gender,
+    decimal BasePriceAmount,
+    string BasePriceCurrency,
     bool IsActive,
     DateTime CreatedAt,
-    DateTime UpdatedAt);
+    DateTime UpdatedAt,
+    IReadOnlyList<ProductVariantResponse> Variants,
+    IReadOnlyList<ProductImageResponse> Images);
+
+public sealed record ProductVariantResponse(
+    Guid Id,
+    Guid ColorId,
+    Guid SizeId,
+    string Sku,
+    decimal? PriceOverrideAmount,
+    string? PriceOverrideCurrency,
+    int StockQuantity,
+    bool IsActive);
+
+public sealed record ProductImageResponse(
+    Guid Id,
+    Guid? VariantId,
+    string Url,
+    bool IsPrimary,
+    int SortOrder);

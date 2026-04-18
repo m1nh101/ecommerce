@@ -10,6 +10,11 @@ public interface IApplicationDbContext
 {
     DbSet<User> Users { get; }
     DbSet<Product> Products { get; }
+    DbSet<Category> Categories { get; }
+    DbSet<Color> Colors { get; }
+    DbSet<Size> Sizes { get; }
+    DbSet<ProductVariant> ProductVariants { get; }
+    DbSet<ProductImage> ProductImages { get; }
     DbSet<Order> Orders { get; }
     DbSet<Payment> Payments { get; }
 

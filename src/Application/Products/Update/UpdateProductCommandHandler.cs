@@ -1,4 +1,5 @@
 using Application.Abstractions;
+using Domain.Enums;
 using Domain.Primitives;
 using Domain.Products;
 using Domain.ValueObjects;
@@ -17,25 +18,16 @@ public sealed class UpdateProductCommandHandler(IApplicationDbContext dbContext)
             .FirstOrDefaultAsync(p => p.Id == productId, cancellationToken);
 
         if (product is null)
-            return Result.Failure(ProductErrors.NotFound);
+            return ProductErrors.NotFound;
 
-        product.UpdateDetails(command.Name, command.Description, command.Category);
+        if (!Enum.TryParse<Gender>(command.Gender, ignoreCase: true, out var gender))
+            return ProductErrors.InvalidGender;
 
-        var priceResult = product.UpdatePrice(new Money(command.Price, command.Currency));
+        product.UpdateDetails(command.Name, command.Description, command.Brand, new CategoryId(command.CategoryId), gender);
+
+        var priceResult = product.UpdateBasePrice(new Money(command.BasePrice, command.Currency));
         if (priceResult.IsFailure)
             return priceResult;
-
-        var delta = command.StockQuantity - product.StockQuantity;
-        if (delta > 0)
-        {
-            var r = product.IncrementStock(delta);
-            if (r.IsFailure) return r;
-        }
-        else if (delta < 0)
-        {
-            var r = product.DecrementStock(-delta);
-            if (r.IsFailure) return r;
-        }
 
         if (command.IsActive)
             product.Activate();

@@ -3,8 +3,9 @@ namespace Api.Endpoints.Products;
 public record UpdateProductRequest(
     string Name,
     string? Description,
-    decimal Price,
+    string Brand,
+    Guid CategoryId,
+    string Gender,
+    decimal BasePrice,
     string Currency,
-    int StockQuantity,
-    string Category,
     bool IsActive);
