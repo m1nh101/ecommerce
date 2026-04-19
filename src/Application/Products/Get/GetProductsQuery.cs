@@ -12,5 +12,8 @@ public sealed record GetProductsQuery(
     decimal? MinPrice,
     decimal? MaxPrice,
     bool? IsActive,
+    Guid? ColorId,
+    Guid? SizeId,
+    bool? InStockOnly,
     int PageNumber = 1,
     int PageSize = 10) : IQuery<Result<PagedResponse<ProductListItemResponse>>>;

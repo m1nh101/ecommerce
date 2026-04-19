@@ -1,10 +1,16 @@
 using Api.Endpoints.Auth;
 using Api.Endpoints.Carts;
+using Api.Endpoints.Categories;
+using Api.Endpoints.Colors;
 using Api.Endpoints.Products;
+using Api.Endpoints.Sizes;
 using Api.OpenApi;
 using Api.Services;
 using Application.Abstractions;
 using Application.Behaviors;
+using Application.Categories;
+using Application.Colors;
+using Application.Sizes;
 using FluentValidation;
 using Infrastructure;
 using Mediator;
@@ -38,6 +44,10 @@ builder.Services.AddValidatorsFromAssembly(
 
 builder.Services.AddInfrastructure(builder.Configuration);
 
+builder.Services.AddScoped<ISizeService, SizeService>();
+builder.Services.AddScoped<IColorService, ColorService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
@@ -70,6 +80,11 @@ app.UseHttpsRedirection();
 
 app.MapAuthEndpoints();
 app.MapProductEndpoints();
+app.MapVariantEndpoints();
+app.MapImageEndpoints();
+app.MapCategoryEndpoints();
+app.MapColorEndpoints();
+app.MapSizeEndpoints();
 app.MapCartEndpoints();
 
 app.MapGet("/health", () => Results.Ok(new { status = "healthy" }))

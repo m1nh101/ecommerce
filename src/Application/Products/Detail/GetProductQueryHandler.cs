@@ -29,6 +29,7 @@ public sealed class GetProductQueryHandler(IApplicationDbContext dbContext)
                 v.PriceOverride?.Amount,
                 v.PriceOverride?.Currency,
                 v.StockQuantity,
+                v.StockQuantity == 0 ? "OutOfStock" : v.StockQuantity <= 5 ? "LowStock" : "InStock",
                 v.IsActive))
             .ToList();
 

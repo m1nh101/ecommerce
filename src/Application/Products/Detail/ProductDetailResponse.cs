@@ -23,6 +23,7 @@ public sealed record ProductVariantResponse(
     decimal? PriceOverrideAmount,
     string? PriceOverrideCurrency,
     int StockQuantity,
+    string StockStatus,
     bool IsActive);
 
 public sealed record ProductImageResponse(

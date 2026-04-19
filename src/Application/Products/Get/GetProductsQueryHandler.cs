@@ -41,6 +41,16 @@ public sealed class GetProductsQueryHandler(IApplicationDbContext dbContext)
         if (query.MaxPrice.HasValue)
             productsQuery = productsQuery.Where(p => p.BasePrice.Amount <= query.MaxPrice.Value);
 
+        if (query.ColorId.HasValue || query.SizeId.HasValue || query.InStockOnly.HasValue)
+        {
+            var colorId = query.ColorId.HasValue ? new ColorId(query.ColorId.Value) : (ColorId?)null;
+            var sizeId = query.SizeId.HasValue ? new SizeId(query.SizeId.Value) : (SizeId?)null;
+            productsQuery = productsQuery.Where(p => p.Variants.Any(v =>
+                (colorId == null || v.ColorId == colorId) &&
+                (sizeId == null || v.SizeId == sizeId) &&
+                (!query.InStockOnly.HasValue || !query.InStockOnly.Value || v.StockQuantity > 0)));
+        }
+
         var totalCount = await productsQuery.CountAsync(cancellationToken);
 
         var items = await productsQuery

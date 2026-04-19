@@ -1,5 +1,6 @@
 using Application.Common;
 using Application.Products.Add;
+using Application.Products.Delete;
 using Application.Products.Detail;
 using Application.Products.Get;
 using Application.Products.Update;
@@ -124,6 +125,34 @@ internal static class ProductEndpoints
         .ProducesProblem(StatusCodes.Status404NotFound)
         .ProducesProblem(StatusCodes.Status400BadRequest)
         .ProducesValidationProblem();
+
+        app.MapDelete("/api/v1/products/{productId:guid}", async (
+            Guid productId,
+            IMediator mediator,
+            CancellationToken cancellationToken) =>
+        {
+            var result = await mediator.Send(new DeleteProductCommand(productId), cancellationToken);
+
+            if (result.IsSuccess)
+                return Results.NoContent();
+
+            return result.Error.Code switch
+            {
+                "Product.NotFound" => Results.Problem(
+                    statusCode: StatusCodes.Status404NotFound,
+                    title: "Not Found",
+                    detail: result.Error.Description),
+                _ => Results.Problem(
+                    statusCode: StatusCodes.Status500InternalServerError,
+                    title: "Internal Server Error")
+            };
+        })
+        .WithName("DeleteProduct")
+        .WithTags("Products")
+        .WithSummary("Soft delete a product (sets isActive = false)")
+        .RequireAuthorization()
+        .Produces(StatusCodes.Status204NoContent)
+        .ProducesProblem(StatusCodes.Status404NotFound);
 
         return app;
     }
